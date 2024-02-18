@@ -1,0 +1,28 @@
+#configuration database
+spring:
+  datasource:
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 5
+    url: jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-request-size: 215MB
+server:
+  servlet:
+    context-path: /v1/rider
+file:
+  uploadDir: rider/uploads

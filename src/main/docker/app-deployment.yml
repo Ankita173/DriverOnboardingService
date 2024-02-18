@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: driver-service
+  labels:
+    name: driver-service
+spec:
+  ports:
+    - nodePort: 30163
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: driver-service
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: driver-service
+spec:
+  selector:
+    matchLabels:
+      app: driver-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: driver-service
+    spec:
+      containers:
+        - name: driver-service
+          image: 'ankita1793/driver:latest'
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-configmap
+                  key: hostname
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-configmap
+                  key: name
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  key: postgres_user
+                  name: postgres-secret
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: postgres_password
